@@ -3,6 +3,8 @@ Using js to solve sudoku puzzle
 
 Choose randomly candidate to solve sodoku puzzle
 
+To run online editors, you can use CodePen or JSFiddle
+
 function numBlanks(array) {
 	// this function should return a number
 }
