@@ -1,45 +1,54 @@
-Array.prototype.unique = function () {
-	return this.filter(function (value, index, self) {
-		return self.indexOf(value) === index;
-	});
-};
-
-var puzzle = [
-	[" ", 4, 1, " "],
-	[" ", " ", 2, " "],
-	[3, " ", " ", " "],
-	[" ", 1, " ", 2]
-];
+var puzzle = [[" ", 4, 1, " "], [" ", " ", 2, " "], [3, " ", " ", " "], [" ", 1, " ", 2]]; 
 
 function numBlanks(array) {
 	// this function should return a number
-	var count = 0;
-	array.forEach(row => {
-		row.forEach(item => {
-			count = item === " " ? count + 1 : count;
-		})
-	})
+	var num = 0;
+	//Determines whether an array is an array
+	if (!(array instanceof Array)) {
+		return num;
+	}
 
-	return count;
+	for (var i = 0; i < array.length; i++) {
+		//Determines whether an array[i] is an array
+		if (!(array[i] instanceof Array)) {
+			return 0;
+		}
+
+		for(var j = 0; j < array[i].length; j++) {
+			//Determine if it is an empty string. If so, increase the count
+			if (array[i][j] === " ") {
+				num++;
+			}
+		}
+	}
+	return num;
 }
 
 function linearSearch(array, item) {
 	// this function should return a Boolean
-	const key = JSON.stringify(item);
+	//Determines whether an array is an array
+	if (!(array instanceof Array)) {
+		return false;
+	}
 
-	return array.filter(element => {
-		return JSON.stringify(element) == key;
-	}).length > 0 ? true : false;
+	for (var i = 0; i < array.length; i++) {
+		//array[i] is equal to item, and returns true if it is
+		if (array[i] === item) {
+			return true;
+		}
+	}
+	//False is returned if no item is found
+	return false;
 }
 
 function notAppear(row) {
 	// this function should return an array
 	var list = [];
-	const length = row.length;
-	var index = 1;
-	for (; index <= length; index++) {
-		if (!row.includes(index)) {
-			list.push(index);
+
+	for (var i = 1; i <= 4; i++) {
+		//Find the missing number in the row and push it into the list
+		if (linearSearch(row, i) == false) {
+			list.push(i);
 		}
 	}
 
@@ -50,9 +59,10 @@ function possibilities(array) {
 	// this function should return an array
 	var poss = [];
 
-	array.forEach(row => {
-		poss.push(notAppear(row));
-	});
+	//Find the missing number in the array and push it into the poss
+	for (var i = 0; i < array.length; i++) {
+		poss.push(notAppear(array[i]));
+	}
 
 	return poss;
 }
@@ -60,99 +70,78 @@ function possibilities(array) {
 function blankEntries(array) {
 	// this function should return an array
 	var blank = [];
-
-	array.forEach((row, rowNum) => {
-		row.forEach((item, colNum) => {
-			if (item === " ") {
-				blank.push([rowNum, colNum]);
+	for (var i = 0; i < array.length; i++) {
+		for(var j = 0; j < array[i].length; j++) {
+			if (array[i][j] === " ") {		//Finds the location of all the empty strings in the two-dimensional array and pushes them into a blank
+				blank.push([i, j]);
 			}
-		});
-	});
+		}
+	}
 
 	return blank;
-}
-
-function randomShffule(array) {
-	// this function returns randomly shuffled array
-	return array.sort(function () {
-		return .5 - Math.random();
-	});
-}
-
-function checkCandidate(array, candidate, blank) {
-	// this function should return a Boolean
-	var cloneArray = [...array];
-	var i, j;
-	const size = cloneArray.length;
-	blank.forEach((pos, index) => cloneArray[pos[0]][pos[1]] = candidate[index]);
-
-	// check col
-	//  |  	|  	|
-	//  | 	|  	|
-	//  \/	\/	\/
-	for (i = 0; i < size; i++) {
-		var tempCol = [];
-		for (j = 0; j < size; j++) {
-			const index = tempCol.findIndex(item => item === cloneArray[j][i]);
-			if (index >= 0) {
-				return false;
-			}
-			tempCol.push(cloneArray[j][i]);
-		}
-	}
-
-	// check every block
-	// -> -> 
-	// -> ->
-	const blockSize = Math.sqrt(size);
-	for (i = 0; i < size; i += blockSize) {
-		for (j = 0; j < size; j += blockSize) {
-			var tempArr = [];
-			var ii, jj;
-
-			for (ii = 0; ii < blockSize; ii++) {
-				for (jj = 0; jj < blockSize; jj++) {
-					tempArr.push(cloneArray[i + ii][j + jj]);
-				}
-			}
-
-			if (tempArr.unique().length != blockSize * blockSize) {
-				return false;
-			}
-		}
-	}
-
-	return true;
 }
 
 function pickCandidate(array) {
 	// this function should return an array
 	var candidate = [];
-	const poss = possibilities(array);
-	const blank = blankEntries(array);
 
-	while (true) {
-		poss.forEach(row => {
-			randomShffule(row).forEach(value => candidate.push(value));
-		});
+	var blank = blankEntries(array);
 
-		if (checkCandidate(array, candidate, blank)) {
-			return candidate;
-		}
+	var poss = possibilities(array);
 
-		candidate = [];
+	for (var i = 0; i < blank.length; i++) {
+		var j = blank[i][0];									//Gets the row in which the current empty space is located
+		var idx = Math.floor(Math.random() * poss[j].length)	//Randomly get the number to fill in, depending on the number missing in the row
+		candidate.push(poss[j][idx]);							//Push the obtained number into the candidate
+		poss[j].splice(idx, 1);									//Removes used Numbers from candidate Numbers
 	}
+
+	return candidate
 }
 
 
-console.log(numBlanks(puzzle));
+/**
+ * function test
+ */
 
-console.log(linearSearch(puzzle, [" ", 4, 1, " "]));
+function test() {
+	console.log("======================test numBlanks begin======================")
+	var num = numBlanks(puzzle)
+	console.log("numBlanks", num)
+	console.log("======================test numBlanks end  ======================\n\n")
 
-console.log(notAppear(puzzle[0]));
 
-console.log(possibilities(puzzle));
+	console.log("======================test linearSearch begin======================")
+	var exist = linearSearch(puzzle[0], 4)
+	console.log("linearSearch puzzle[0] exist item 4", exist)
+	console.log("======================test linearSearch end  ======================\n\n")
 
-console.log(blankEntries(puzzle));
 
-console.log(pickCandidate(puzzle));
+	console.log("======================test notAppear begin======================")
+	var list = notAppear(puzzle[0])
+	console.log("notAppear puzzle[0]", JSON.stringify(list))
+	console.log("======================test notAppear end  ======================\n\n")
+
+
+	console.log("======================test possibilities begin======================")
+	var poss = possibilities(puzzle)
+	console.log("possibilities", JSON.stringify(poss))
+	console.log("======================test possibilities end  ======================\n\n")
+
+
+	console.log("======================test blankEntries begin======================")
+	var blank = blankEntries(puzzle)
+	console.log("blankEntries", JSON.stringify(blank))
+	console.log("======================test blankEntries end  ======================\n\n")
+
+
+	console.log("======================test pickCandidate begin======================")
+	var candidate = pickCandidate(puzzle)
+	console.log("pickCandidate", JSON.stringify(candidate))
+	console.log("======================test pickCandidate end  ======================\n\n")
+
+}
+
+
+test()
+	
