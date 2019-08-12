@@ -1,6 +1,8 @@
 # SudokuPuzzle
 Using js to solve sudoku puzzle
 
+Choose randomly candidate to solve sodoku puzzle
+
 function numBlanks(array) {
 	// this function should return a number
 }
