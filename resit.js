@@ -1,4 +1,9 @@
-var puzzle = [[" ", 4, 1, " "], [" ", " ", 2, " "], [3, " ", " ", " "], [" ", 1, " ", 2]]; 
+var puzzle = [
+	[" ", 4, 1, " "],
+	[" ", " ", 2, " "],
+	[3, " ", " ", " "],
+	[" ", 1, " ", 2]
+];
 
 function numBlanks(array) {
 	// this function should return a number
@@ -14,7 +19,7 @@ function numBlanks(array) {
 			return 0;
 		}
 
-		for(var j = 0; j < array[i].length; j++) {
+		for (var j = 0; j < array[i].length; j++) {
 			//Determine if it is an empty string. If so, increase the count
 			if (array[i][j] === " ") {
 				num++;
@@ -71,8 +76,8 @@ function blankEntries(array) {
 	// this function should return an array
 	var blank = [];
 	for (var i = 0; i < array.length; i++) {
-		for(var j = 0; j < array[i].length; j++) {
-			if (array[i][j] === " ") {		//Finds the location of all the empty strings in the two-dimensional array and pushes them into a blank
+		for (var j = 0; j < array[i].length; j++) {
+			if (array[i][j] === " ") { //Finds the location of all the empty strings in the two-dimensional array and pushes them into a blank
 				blank.push([i, j]);
 			}
 		}
@@ -90,10 +95,10 @@ function pickCandidate(array) {
 	var poss = possibilities(array);
 
 	for (var i = 0; i < blank.length; i++) {
-		var j = blank[i][0];									//Gets the row in which the current empty space is located
-		var idx = Math.floor(Math.random() * poss[j].length)	//Randomly get the number to fill in, depending on the number missing in the row
-		candidate.push(poss[j][idx]);							//Push the obtained number into the candidate
-		poss[j].splice(idx, 1);									//Removes used Numbers from candidate Numbers
+		var j = blank[i][0]; //Gets the row in which the current empty space is located
+		var idx = Math.floor(Math.random() * poss[j].length) //Randomly get the number to fill in, depending on the number missing in the row
+		candidate.push(poss[j][idx]); //Push the obtained number into the candidate
+		poss[j].splice(idx, 1); //Removes used Numbers from candidate Numbers
 	}
 
 	return candidate
@@ -143,5 +148,4 @@ function test() {
 }
 
 
-test()
-	
+test();
